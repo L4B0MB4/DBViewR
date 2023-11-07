@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -11,6 +11,7 @@ import ReactFlow, {
 } from "reactflow";
 
 import "reactflow/dist/style.css";
+import { DefaultNode } from "./nodes/default/DefaultNode";
 
 const initialNodes = [
   { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
@@ -22,6 +23,7 @@ const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
 export const Flow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const nodeTypes = useMemo(() => ({ default: DefaultNode }), []);
 
   const onConnect = useCallback(
     (conn: Connection) => {
@@ -40,6 +42,7 @@ export const Flow = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        nodeTypes={nodeTypes}
       >
         <Controls />
         <MiniMap />
