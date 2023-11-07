@@ -12,6 +12,8 @@ using System.Diagnostics;
 using DBViewR.Model;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using System.Linq;
+using System.Text.Json;
+using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +64,13 @@ app.MapGet("/api/relations", (DynamicDbContext ctx) =>
     return listOfRelations;
 }
 );
+
+
+app.MapGet("/api/{table}/data", (string table,DynamicDbContext ctx) =>
+{
+    var ret = string.Join("", ctx.Database.SqlQueryRaw<string>($"Select * from {table} for json path"));
+    return JsonSerializer.Deserialize<List<Dictionary<string,JsonElement>>>(ret);
+});
 
 
 app.Run();
