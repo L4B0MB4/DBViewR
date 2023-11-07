@@ -2,14 +2,17 @@ import { useEffect } from "react";
 import { ReactFlowProvider } from "reactflow";
 import "./App.css";
 import { Flow } from "./flow/Flow";
+import { fetchRelations, fetchTables } from "./state/features/erm/erm";
 import { useAppDispatch } from "./state/hooks";
 
 function App() {
   const dispatch = useAppDispatch();
   console.log(dispatch);
   useEffect(() => {
-    fetch("/api/hello");
-  });
+    dispatch(fetchTables());
+    dispatch(fetchRelations());
+  }, []);
+
   return (
     <>
       <ReactFlowProvider>

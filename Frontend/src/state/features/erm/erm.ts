@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 enum EDataType {
   String,
@@ -23,8 +23,8 @@ export interface TableRelation {
 }
 
 export interface Relation {
-  from: TableRelation;
-  to: TableRelation;
+  From: TableRelation;
+  To: TableRelation;
 }
 
 interface ERMState {
@@ -50,27 +50,36 @@ const initialState: ERMState = {
   ],
   relations: [
     {
-      from: {
+      From: {
         Name: "Table1",
         Schema: "dbo",
       },
-      to: {
+      To: {
         Name: "Table2",
         Schema: "dbo",
       },
     },
     {
-      from: {
+      From: {
         Name: "Table1",
         Schema: "dbo",
       },
-      to: {
+      To: {
         Name: "Table3",
         Schema: "dbo",
       },
     },
   ],
 };
+
+export const fetchTables = createAsyncThunk("fetchTables", async () => {
+  const res = await fetch(`/api/tables`);
+  return res?.json();
+});
+export const fetchRelations = createAsyncThunk("fetchRelations", async () => {
+  const res = await fetch(`/api/relations`);
+  return res?.json();
+});
 
 export const ermSlice = createSlice({
   name: "erm",
@@ -80,6 +89,22 @@ export const ermSlice = createSlice({
     addTable: (state, action: PayloadAction<Table>) => {
       state.tables.push(action.payload);
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchTables.pending, (state, action) => {
+      // state.isLoading = true;
+    });
+    builder.addCase(fetchTables.fulfilled, (state, action) => {
+      //state.isLoading = false;
+      state.tables = action.payload;
+    });
+    builder.addCase(fetchRelations.fulfilled, (state, action) => {
+      //state.isLoading = false;
+      state.relations = action.payload;
+    });
+    builder.addCase(fetchTables.rejected, (state, action) => {
+      //state.isError = true;
+    });
   },
 });
 

@@ -36,9 +36,9 @@ export const useFlowPreparation = (): [
   useEffect(() => {
     console.log("relations");
     const edges = relations.map((x) => ({
-      id: x.from.Schema + x.from.Name + x.to.Schema + x.to.Name,
-      source: x.from.Schema + x.from.Name,
-      target: x.to.Schema + x.to.Name,
+      id: x.From.Schema + x.From.Name + x.To.Schema + x.To.Name,
+      source: x.From.Schema + x.From.Name,
+      target: x.To.Schema + x.To.Name,
     }));
     setEdges(edges);
   }, [relations]);
