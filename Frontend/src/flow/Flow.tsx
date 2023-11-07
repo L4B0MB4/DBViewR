@@ -1,60 +1,89 @@
-import React, { useCallback, useEffect, useMemo } from "react";
 import ReactFlow, {
   MiniMap,
   Controls,
   Background,
-  useNodesState,
-  useEdgesState,
-  addEdge,
   BackgroundVariant,
-  Connection,
+  useNodes,
+  useReactFlow,
+  useEdges,
 } from "reactflow";
-
+import { useCallback, useEffect, useMemo } from "react";
 import "reactflow/dist/style.css";
 import { DefaultNode } from "./nodes/default/DefaultNode";
-import { useAppDispatch, useAppSelector } from "../state/hooks";
+import { TableViewNode } from "./nodes/tableview/TableViewNode";
+import { useFlowPreparation } from "./useFlowPreparation";
+import dagre from "dagre";
 
-const nodeTypes = { default: DefaultNode }
+const nodeTypes = { default: DefaultNode, tableView: TableViewNode };
+
+const dagreGraph = new dagre.graphlib.Graph();
+dagreGraph.setDefaultEdgeLabel(() => ({}));
+
+const nodeWidth = 172;
+const nodeHeight = 36;
+
+const getLayoutedElements = (nodes, edges, direction = "TB") => {
+  const isHorizontal = direction === "LR";
+  dagreGraph.setGraph({ rankdir: direction });
+
+  nodes.forEach((node) => {
+    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+  });
+
+  edges.forEach((edge) => {
+    dagreGraph.setEdge(edge.source, edge.target);
+  });
+
+  dagre.layout(dagreGraph);
+
+  nodes.forEach((node) => {
+    const nodeWithPosition = dagreGraph.node(node.id);
+    node.targetPosition = isHorizontal ? "left" : "top";
+    node.sourcePosition = isHorizontal ? "right" : "bottom";
+
+    // We are shifting the dagre node position (anchor=center center) to the top left
+    // so it matches the React Flow node anchor point (top left).
+    node.position = {
+      x: nodeWithPosition.x - nodeWidth / 2,
+      y: nodeWithPosition.y - nodeHeight / 2,
+    };
+
+    return node;
+  });
+
+  return { nodes, edges };
+};
 
 export const Flow = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const tables = useAppSelector(s => s.erm.tables)
-  const relations = useAppSelector(s => s.erm.relations)
-  useEffect(() => {
-    console.log("tables")
-    const tableNodes = tables.map((x, i) => ({ id: x.Schema + x.Name, position: { x: 0, y: i * 100 }, data: x }))
-    setNodes(tableNodes)
-  }, [tables])
-  useEffect(() => {
-    console.log("relations")
-    const edges = relations.map((x) => ({ id: x.from.Schema + x.from.Name, source: x.from.Schema + x.from.Name, target: x.to.Schema + x.to.Name }))
-    setEdges(edges)
-  }, [relations])
+  const existingNodes = useNodes();
+  const [nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, onConnect] = useFlowPreparation();
 
-  const onConnect = useCallback(
-    (conn: Connection) => {
-      console.log("hier");
-      console.log(conn);
-      return setEdges((eds) => addEdge(conn, eds));
-    },
-    [setEdges]
-  );
+  const onLayout = useCallback(() => {
+    console.log("hier");
+    const { nodes: nodesLayouted, edges: edgesLayouted } = getLayoutedElements(nodes, edges);
+    setNodes(nodesLayouted);
+    setEdges(edgesLayouted);
+  }, [nodes, edges]);
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-      >
-        <Controls />
-        <MiniMap />
-        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-      </ReactFlow>
-    </div>
+    <>
+      <button onClick={() => onLayout()}>vertical layout</button>
+      <div style={{ width: "100vw", height: "100vh" }}>
+        <ReactFlow
+          maxZoom={10}
+          minZoom={0.1}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+        >
+          <Controls />
+          <MiniMap />
+          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+        </ReactFlow>
+      </div>
+    </>
   );
 };
