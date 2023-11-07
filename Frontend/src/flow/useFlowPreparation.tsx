@@ -36,7 +36,7 @@ export const useFlowPreparation = (): [
     console.log("tables");
     const tableNodes = tables.map((x, i) => ({
       id: x.Schema + x.Name,
-      type: step == 1 ? "default" : "tableView",
+      type: i == 0 ? "default" : "tableView",
       position: { x: 0, y: i * 100 },
       data: x,
     }));
@@ -45,7 +45,7 @@ export const useFlowPreparation = (): [
   useEffect(() => {
     console.log("relations");
     const edges = relations.map((x) => ({
-      id: x.from.Schema + x.from.Name,
+      id: x.from.Schema + x.from.Name + x.to.Schema + x.to.Name,
       source: x.from.Schema + x.from.Name,
       target: x.to.Schema + x.to.Name,
     }));

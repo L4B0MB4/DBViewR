@@ -50,6 +50,13 @@ const initialState: ERMState = {
             DataType: EDataType.String,
             Name: "Column2"
         }]
+    }, {
+        Schema: "dbo",
+        Name: "Table3",
+        Columns: [{
+            DataType: EDataType.String,
+            Name: "Column3"
+        }]
     }],
     relations: [
         {
@@ -58,6 +65,15 @@ const initialState: ERMState = {
                 Schema: "dbo"
             }, to: {
                 Name: "Table2",
+                Schema: "dbo"
+            }
+        },
+        {
+            from: {
+                Name: "Table1",
+                Schema: "dbo"
+            }, to: {
+                Name: "Table3",
                 Schema: "dbo"
             }
         }
