@@ -1,4 +1,12 @@
-import ReactFlow, { MiniMap, Controls, Background, BackgroundVariant } from "reactflow";
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  Background,
+  BackgroundVariant,
+  Panel,
+  NodeChange,
+  useReactFlow,
+} from "reactflow";
 import { useCallback, useEffect, useMemo } from "react";
 import "reactflow/dist/style.css";
 import { DefaultNode } from "./nodes/default/DefaultNode";
@@ -9,24 +17,52 @@ import { getLayoutedElements } from "./layout/autolayout";
 const nodeTypes = { default: DefaultNode, tableView: TableViewNode };
 
 export const Flow = () => {
+  const { fitView, getNodes, getEdges } = useReactFlow();
   const [nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, onConnect] = useFlowPreparation();
-
+  console.log(nodes);
   const onLayout = () => {
-    const x = getLayoutedElements(nodes, edges);
-    console.log(x);
+    const x = getLayoutedElements(getNodes(), getEdges());
     setNodes([...x.nodes]);
-    setEdges(x.edges);
+    setEdges([...x.edges]);
+    window.requestAnimationFrame(() => {
+      fitView({
+        duration: 500,
+      });
+    });
+  };
+  const focusId = "dboTable1";
+
+  const onNodesChangeImpr = (changes: Array<NodeChange>) => {
+    // call the actual change handler to apply the node changes to your nodes
+    onNodesChange(changes);
+    // loop through the changes and check for a dimensions change that relates to the node we want to focus
+    changes.forEach((change) => {
+      /*       if (
+        change.type === "dimensions" &&
+        focusId === change.id &&
+        change.dimensions &&
+        change.dimensions.height > 0 &&
+        change.dimensions.width > 0
+      ) {
+        fitView({
+          nodes: [{ id: focusId }],
+          duration: 500,
+        });
+
+        // reset the focus id so we don't retrigger fit view when the dimensions of this node happen to change
+        //setFocusId(null);
+      } */
+    });
   };
   return (
     <>
-      <button onClick={() => onLayout()}>vertical layout</button>
       <div style={{ width: "100vw", height: "100vh" }}>
         <ReactFlow
           maxZoom={10}
           minZoom={0.1}
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
+          onNodesChange={onNodesChangeImpr}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
@@ -34,6 +70,9 @@ export const Flow = () => {
           <Controls />
           <MiniMap />
           <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+          <Panel position="bottom-center">
+            <button onClick={() => onLayout()}>vertical layout</button>
+          </Panel>
         </ReactFlow>
       </div>
     </>

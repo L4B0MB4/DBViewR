@@ -1,8 +1,11 @@
 import { useCallback } from "react";
 import { Handle, Node, NodeProps, Position } from "reactflow";
 import { Table } from "../../../state/features/erm/erm";
+import { useAppSelector } from "../../../state/hooks";
 
 export const TableViewNode = ({ data }: NodeProps<Table>) => {
+  const tableDatas = useAppSelector((s) => s.tabledata.tableWithData);
+  const tableData = tableDatas.find((x) => x.Schema == data.Schema && x.Name == data.Name);
   return (
     <>
       <Handle type="target" position={Position.Top} id="ab" />
@@ -11,51 +14,23 @@ export const TableViewNode = ({ data }: NodeProps<Table>) => {
           <table className="border-collapse table-auto w-full text-sm">
             <thead className="">
               <tr>
-                <th className="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
-                  Song
-                </th>
-                <th className="border-b dark:border-slate-600 font-medium p-4 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
-                  Artist
-                </th>
-                <th className="border-b dark:border-slate-600 font-medium p-4 pr-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
-                  Year
-                </th>
+                {tableData?.Columns.map((item) => (
+                  <th className="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
+                    {item.Name}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-slate-800">
-              <tr>
-                <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
-                  The Sliding Mr. Bones (Next Stop, Pottersville)
-                </td>
-                <td className="border-b border-slate-100 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400">
-                  Malcolm Lockyer
-                </td>
-                <td className="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">
-                  1961
-                </td>
-              </tr>
-              <tr>
-                <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
-                  Witchy Woman
-                </td>
-                <td className="border-b border-slate-100 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400">
-                  The Eagles
-                </td>
-                <td className="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">
-                  1972
-                </td>
-              </tr>
-              <tr>
-                <td className="border-b border-slate-200 dark:border-slate-600 p-4 pl-8 text-slate-500 dark:text-slate-400">
-                  Shining Star
-                </td>
-                <td className="border-b border-slate-200 dark:border-slate-600 p-4 text-slate-500 dark:text-slate-400">
-                  Earth, Wind, and Fire
-                </td>
-                <td className="border-b border-slate-200 dark:border-slate-600 p-4 pr-8 text-slate-500 dark:text-slate-400">
-                  1975
-                </td>
-              </tr>
+              {tableData?.Values.map((row) => (
+                <tr>
+                  {row.map((item) => (
+                    <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
+                      {item.toString()}
+                    </td>
+                  ))}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
