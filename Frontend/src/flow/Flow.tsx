@@ -55,7 +55,6 @@ const getLayoutedElements = (nodes, edges, direction = "TB") => {
 };
 
 export const Flow = () => {
-  const existingNodes = useNodes();
   const [nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, onConnect] = useFlowPreparation();
 
   const onLayout = useCallback(() => {
