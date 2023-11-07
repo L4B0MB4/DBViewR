@@ -1,18 +1,17 @@
 import ReactFlow, {
-  MiniMap,
-  Controls,
   Background,
   BackgroundVariant,
-  Panel,
+  Controls,
+  MiniMap,
   NodeChange,
+  Panel,
   useReactFlow,
 } from "reactflow";
-import { useCallback, useEffect, useMemo } from "react";
 import "reactflow/dist/style.css";
+import { getLayoutedElements } from "./layout/autolayout";
 import { DefaultNode } from "./nodes/default/DefaultNode";
 import { TableViewNode } from "./nodes/tableview/TableViewNode";
 import { useFlowPreparation } from "./useFlowPreparation";
-import { getLayoutedElements } from "./layout/autolayout";
 
 const nodeTypes = { default: DefaultNode, tableView: TableViewNode };
 
@@ -30,14 +29,15 @@ export const Flow = () => {
       });
     });
   };
-  const focusId = "dboTable1";
 
   const onNodesChangeImpr = (changes: Array<NodeChange>) => {
     // call the actual change handler to apply the node changes to your nodes
     onNodesChange(changes);
     // loop through the changes and check for a dimensions change that relates to the node we want to focus
-    changes.forEach((change) => {
-      /*       if (
+    /* changes.forEach((change) => {
+      
+  const focusId = "dboTable1";
+            if (
         change.type === "dimensions" &&
         focusId === change.id &&
         change.dimensions &&
@@ -51,8 +51,8 @@ export const Flow = () => {
 
         // reset the focus id so we don't retrigger fit view when the dimensions of this node happen to change
         //setFocusId(null);
-      } */
-    });
+      } 
+    });*/
   };
   return (
     <>

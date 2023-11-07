@@ -1,15 +1,5 @@
 import { useCallback, useEffect } from "react";
-import {
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  Connection,
-  useViewport,
-  OnNodesChange,
-  Edge,
-  OnEdgesChange,
-  Node,
-} from "reactflow";
+import { Connection, Edge, Node, OnEdgesChange, OnNodesChange, addEdge, useEdgesState, useNodesState } from "reactflow";
 import { Table } from "../state/features/erm/erm";
 import { useAppSelector } from "../state/hooks";
 

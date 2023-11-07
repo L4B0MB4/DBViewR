@@ -1,5 +1,4 @@
-import { useCallback } from "react";
-import { Handle, Node, NodeProps, Position } from "reactflow";
+import { Handle, NodeProps, Position } from "reactflow";
 import { Table } from "../../../state/features/erm/erm";
 import { useAppSelector } from "../../../state/hooks";
 
