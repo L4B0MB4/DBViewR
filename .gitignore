@@ -148,3 +148,4 @@ build
 
 # Intellij Rider directory
 .idea/
+.vs/
