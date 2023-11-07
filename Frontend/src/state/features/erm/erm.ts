@@ -8,23 +8,23 @@ enum EDataType {
 }
 
 
-interface Column {
+export interface Column {
     Name: string,
     DataType: EDataType
 }
 
-interface Table {
+export interface Table {
     Schema: string,
     Name: string,
     Columns: Array<Column>
 }
 
-interface TableRelation {
+export interface TableRelation {
     Name: string,
     Schema: string
 }
 
-interface Relation {
+export interface Relation {
     from: TableRelation
     to: TableRelation
 }
@@ -43,11 +43,28 @@ const initialState: ERMState = {
             DataType: EDataType.String,
             Name: "Column1"
         }]
+    }, {
+        Schema: "dbo",
+        Name: "Table2",
+        Columns: [{
+            DataType: EDataType.String,
+            Name: "Column2"
+        }]
     }],
-    relations: []
+    relations: [
+        {
+            from: {
+                Name: "Table1",
+                Schema: "dbo"
+            }, to: {
+                Name: "Table2",
+                Schema: "dbo"
+            }
+        }
+    ]
 }
 
-export const counterSlice = createSlice({
+export const ermSlice = createSlice({
     name: 'erm',
     // `createSlice` will infer the state type from the `initialState` argument
     initialState,
@@ -58,6 +75,6 @@ export const counterSlice = createSlice({
     },
 })
 
-export const { addTable } = counterSlice.actions
+export const { addTable } = ermSlice.actions
 
-export default counterSlice.reducer
+export default ermSlice.reducer

@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import counter from '../features/counter/counterSlice'
+import erm from '../features/erm/erm'
 export const store = configureStore({
     reducer: {
-        counter
+        erm
     },
 })
 

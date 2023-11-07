@@ -1,15 +1,14 @@
 import { useCallback } from 'react';
-import { Handle, Position } from 'reactflow';
+import { Handle, Node, NodeProps, Position } from 'reactflow';
+import { Table } from '../../../state/features/erm/erm';
 
-const handleStyle = { left: 10 };
 
-export const DefaultNode = () => {
-
+export const DefaultNode = ({ data }: NodeProps<Table>) => {
     return (
         <>
             <Handle type="target" position={Position.Top} id="ab" />
             <div>
-                halloo
+                {data.Schema}.{data.Name}
             </div>
             <Handle type="source" position={Position.Bottom} id="a" />
         </>

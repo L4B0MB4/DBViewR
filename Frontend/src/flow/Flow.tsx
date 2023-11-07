@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -12,18 +12,25 @@ import ReactFlow, {
 
 import "reactflow/dist/style.css";
 import { DefaultNode } from "./nodes/default/DefaultNode";
+import { useAppDispatch, useAppSelector } from "../state/hooks";
 
-const initialNodes = [
-  { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
-  { id: "2", position: { x: 0, y: 100 }, data: { label: "2" } },
-  { id: "3", position: { x: 0, y: 200 }, data: { label: "3" } },
-];
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
+const nodeTypes = { default: DefaultNode }
 
 export const Flow = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const nodeTypes = useMemo(() => ({ default: DefaultNode }), []);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const tables = useAppSelector(s => s.erm.tables)
+  const relations = useAppSelector(s => s.erm.relations)
+  useEffect(() => {
+    console.log("tables")
+    const tableNodes = tables.map((x, i) => ({ id: x.Schema + x.Name, position: { x: 0, y: i * 100 }, data: x }))
+    setNodes(tableNodes)
+  }, [tables])
+  useEffect(() => {
+    console.log("relations")
+    const edges = relations.map((x) => ({ id: x.from.Schema + x.from.Name, source: x.from.Schema + x.from.Name, target: x.to.Schema + x.to.Name }))
+    setEdges(edges)
+  }, [relations])
 
   const onConnect = useCallback(
     (conn: Connection) => {
